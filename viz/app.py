@@ -1,3 +1,4 @@
+import flask
 import dash
 import dash_table
 import dash_core_components as dcc
@@ -12,9 +13,11 @@ import pandas as pd
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = flask.Flask(__name__) # define flask app.server
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server)
+
 df_cases_death = pd.read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv")
-fig_cases_death = go.Figure(data=[go.Scatter(x=df_cases_death.iloc[0][4:], y=df_cases_death[df_cases_death['Country/Region'] == 'Belgium'].iloc[0][4:])])
+#fig_cases_death = go.Figure(data=[go.Scatter(x=df_cases_death.iloc[0][4:], y=df_cases_death[df_cases_death['Country/Region'] == 'Belgium'].iloc[0][4:])])
 
 # Read the data from github
 df_cases_belgium = pd.read_csv("https://raw.githubusercontent.com/sdiepend/stayinyourkot/master/COVID19_Belgium_cases.csv")
@@ -54,7 +57,7 @@ app.layout = html.Div(style={}, children=[
                 figure=table_severe
             )]
         ),
-       
+
         html.Div(className='col s12 m6', children=[
             dcc.Graph(
                 id='fig-severe-belgium',
@@ -64,11 +67,11 @@ app.layout = html.Div(style={}, children=[
     ),
 
 
-    dcc.Graph(
-        id='cases-death',
-        figure=fig_cases_death
-    ),
+    # dcc.Graph(
+    #     id='cases-death',
+    #     figure=fig_cases_death
+    # ),
 ])
 
 if __name__ == '__main__':
-    app.run_server(debug=False, host='0.0.0.0', port=8050)
+    app.run_server()

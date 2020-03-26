@@ -20,4 +20,4 @@ RUN pip install --upgrade pip && \
 
 EXPOSE 8000
 
-CMD gunicorn -b :8000 viz.app:app.server
+CMD gunicorn -b :8080 viz.app:app.server

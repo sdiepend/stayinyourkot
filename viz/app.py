@@ -34,7 +34,6 @@ table_severe = ff.create_table(df_belgium_severe)
 # create line chart for the severe cases
 fig_severe = go.Figure()
 fig_severe.layout = {'title': 'Severe Cases'}
-fig_severe.update_yaxes(range=[0, 3000])
 fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['death'], name='deaths', line={'color': 'black'}))
 fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['icu'], name='icu', line={'color' : 'tomato'}))
 fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['hospitalized'], name='hospitalized', line={'color': 'purple'}))
@@ -49,6 +48,10 @@ app.layout = html.Div(style={}, children=[
         style={
             'textAlign': 'center',
         }
+    ),
+
+    html.P(
+        "ICU capacity as commuincated by the daily update by the FOD Volksgezondheid"
     ),
 
     dcc.Graph(

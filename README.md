@@ -1,7 +1,8 @@
+# Run with virtualenv
 # Run with docker
 
 ```shell
- docker build -f "Dockerfile" -t stayinyourkot:latest "."
+docker build -f "Dockerfile" -t stayinyourkot:latest "."
 ```
 
 ```shell

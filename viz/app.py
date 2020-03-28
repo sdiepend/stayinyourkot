@@ -35,9 +35,9 @@ table_severe = ff.create_table(df_belgium_severe)
 fig_severe = go.Figure()
 fig_severe.layout = {'title': 'Severe Cases'}
 fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['death'], name='deaths', line={'color': 'black'}))
-fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['icu'], name='icu', line={'color' : 'tomato'}))
+fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['icu'], name='ICU', line={'color' : 'tomato'}))
 fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['hospitalized'], name='hospitalized', line={'color': 'purple'}))
-fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['capacity_icu'], name='ICU Capacity', line={'color': 'darkred', 'dash': 'dashdot'}))
+fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['capacity_icu'], name='ICU Capacity', line={'color': 'tomato', 'dash': 'dashdot'}))
 
 fig_bar_infected_daily = go.Figure()
 fig_bar_infected_daily.layout={'title': 'Daily new infections'}

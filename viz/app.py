@@ -25,7 +25,7 @@ df_growth_belgium = pd.read_csv("https://raw.githubusercontent.com/sdiepend/stay
 
 # Select only the severe cases columns
 df_belgium_severe = df_cases_belgium[['date', 'daily_infected', 'daily_deceased', 'deceased', 'icu', 'capacity_icu', 'hospitalized']][13:]
-df_growth_belgium_severe = df_growth_belgium[['date', 'daily_infected', 'daily_deceased', 'deceased', 'icu', 'capacity_icu', 'hospitalized']][13:]
+df_growth_belgium_severe = df_growth_belgium[['date', 'daily_infected', 'infected', 'daily_deceased', 'deceased', 'icu', 'capacity_icu', 'hospitalized', 'recoverd']][13:]
 
 # Correctly format icu and hospitalized
 df_belgium_severe[['daily_deceased', 'icu', 'hospitalized']] = df_belgium_severe[['daily_deceased', 'icu', 'hospitalized']].astype(int)
@@ -41,12 +41,48 @@ fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe
 fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['icu'], name='ICU', line={'color' : 'tomato'}))
 fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['hospitalized'], name='hospitalized', line={'color': 'purple'}))
 fig_severe.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['capacity_icu'], name='ICU Capacity', line={'color': 'tomato', 'dash': 'dashdot'}))
+fig_severe.add_shape(
+    # Line Vertical
+    dict(
+        type="line",
+        x0="3/18/2020",
+        x1="3/18/2020",
+        y0=0,
+        y1=4000,
+        line=dict(
+            color="RoyalBlue",
+            dash="dashdot",
+        )
+    )
+)
+fig_severe.add_trace(go.Scatter(x=["3/19/2020"], y=[3500], text=["Lockdown"], mode="text", name="Lockdown"))
+fig_severe.add_shape(
+    # Line Vertical
+    dict(
+        type="line",
+        x0="3/14/2020",
+        x1="3/14/2020",
+        y0=0,
+        y1=4000,
+        line=dict(
+            color="RoyalBlue",
+            dash="dashdot",
+        )
+    )
+)
+fig_severe.add_trace(go.Scatter(x=["3/15/2020"], y=[3500], text=["Lockdown Light"], mode="text", name="Lockdown Light"))
+
 
 fig_bar_infected_daily = go.Figure()
 fig_bar_infected_daily.layout={'title': 'Daily new infections and deaths'}
 fig_bar_infected_daily.add_trace(go.Bar(x=df_belgium_severe['date'], y=df_belgium_severe['daily_infected'], name='New Infections'))
 fig_bar_infected_daily.add_trace(go.Bar(x=df_belgium_severe['date'], y=df_belgium_severe['daily_deceased'], name='New Deaths'))
 
+fig_bar_growth = go.Figure()
+#fig_bar_growth.
+fig_bar_growth.layout={'title': 'Growth Rate'}
+fig_bar_growth.add_trace(go.Bar(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['infected'], name='% growth infected', text=df_growth_belgium_severe['infected'], textposition='auto'))
+fig_bar_growth.add_trace(go.Bar(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['recoverd'], name='% growth recoverd', marker={'color':'green'}))
 
 app.layout = html.Div(style={}, children=[
     html.H1(children='COVID19 Dashboard',
@@ -56,7 +92,7 @@ app.layout = html.Div(style={}, children=[
     ),
 
     html.P(
-        "ICU capacity as commuincated by the daily update by the FOD Volksgezondheid"
+        "ICU capacity as commuincated by the daily update by the FOD Volksgezondheid(https://youtu.be/-0ErsaJ52oY?t=2018)"
     ),
 
     dcc.Graph(
@@ -67,6 +103,11 @@ app.layout = html.Div(style={}, children=[
     dcc.Graph(
         id='fig-infected-daily',
         figure=fig_bar_infected_daily
+    ),
+
+    dcc.Graph(
+        id='fig-bar-growth',
+        figure=fig_bar_growth
     ),
 
     dcc.Graph(

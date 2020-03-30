@@ -80,9 +80,15 @@ fig_bar_infected_daily.add_trace(go.Bar(x=df_belgium_severe['date'], y=df_belgiu
 
 fig_bar_growth = go.Figure()
 #fig_bar_growth.
-fig_bar_growth.layout={'title': 'Growth Rate'}
+fig_bar_growth.layout={'title': 'Growth Rate infected and recoverd'}
 fig_bar_growth.add_trace(go.Bar(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['infected'], name='% growth infected', text=df_growth_belgium_severe['infected'], textposition='auto'))
 fig_bar_growth.add_trace(go.Bar(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['recoverd'], name='% growth recoverd', marker={'color':'green'}))
+
+fig_bar_growth_severe = go.Figure()
+fig_bar_growth_severe.layout={'title': 'Growth Rate hospitalizations, intensive care and deceased'}
+fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['hospitalized'], name='% growth hospitalizations', line={'color': 'purple'}))
+fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['icu'], name='% growth ICU', marker={'color':'tomato'}))
+fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['deceased'], name='% growth deceased', marker={'color':'black'}))
 
 app.layout = html.Div(style={}, children=[
     html.H1(children='COVID19 Dashboard',
@@ -111,8 +117,13 @@ app.layout = html.Div(style={}, children=[
     ),
 
     dcc.Graph(
+        id='fig-bar-growth-severe',
+        figure=fig_bar_growth_severe
+    ),
+
+    dcc.Graph(
         id='table-severe-belgium',
-            figure=table_severe
+        figure=table_severe
     ),
 ])
 

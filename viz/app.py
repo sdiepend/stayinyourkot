@@ -95,6 +95,38 @@ labels = ['Flanders', 'Wallonia', 'Brussels']
 values = df_cases_belgium.loc[:,['infected_flanders', 'infected_brussels', 'infected_wallonia']].iloc[-1].astype(int).values
 fig_pie_regions = go.Figure(data=[go.Pie(labels=labels,values=sorted(values, reverse=True), hole=.4, sort=False, direction="clockwise")])
 
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-55273305-4"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-55273305-4');
+        </script>
+
+        {%metas%}
+        <title>Corona Situation</title>
+        {%favicon%}
+        {%css%}
+    </head>
+    <body>
+        <div></div>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+        <div></div>
+    </body>
+</html>
+'''
+
 app.layout = html.Div(style={}, children=[
     html.H1(children='COVID19 Dashboard',
         style={
@@ -112,14 +144,18 @@ app.layout = html.Div(style={}, children=[
     ),
 
     html.Div([
-        dcc.Graph(
-            id='fig-infected-daily',
-            figure=fig_bar_infected_daily
-        ),
+        html.Div([
+            dcc.Graph(
+                id='fig-infected-daily',
+                figure=fig_bar_infected_daily
+            )
+        ], className="eight columns"),
 
-        dcc.Graph(
-            figure=fig_pie_regions
-        )
+        html.Div([
+            dcc.Graph(
+                figure=fig_pie_regions
+            )
+        ], className="four columns")
     ], className="row"),
 
 

@@ -49,7 +49,7 @@ fig_severe.add_shape(
         x0="3/18/2020",
         x1="3/18/2020",
         y0=0,
-        y1=4500,
+        y1=6000,
         line=dict(
             color="RoyalBlue",
             dash="dashdot",
@@ -65,7 +65,7 @@ fig_severe.add_shape(
         x0="3/14/2020",
         x1="3/14/2020",
         y0=0,
-        y1=4500,
+        y1=6000,
         line=dict(
             color="RoyalBlue",
             dash="dashdot",

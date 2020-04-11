@@ -55,3 +55,18 @@ python viz/app.py
 # Deploy on Google App Engine
 
 An app.yaml file is included with the correct gunicorn command to deploy and run on GAE.
+
+
+# Run the jupyter notebooks
+
+Follow the instructions to run the app locally.
+
+Install jupyter
+```shell
+pip install jupyter
+```
+
+Run jupyter (notebooks are located in notebooks directory)
+```shell
+jupyter notebook notebooks
+```

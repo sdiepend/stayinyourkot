@@ -1,4 +1,10 @@
-# Run with docker
+# Table of Contents
+1. [Run with docker](#run-with-docker)
+2. [Run with pyenv and virtualenv](#run-with-pyenv-and-virtualenv)
+3. [Run the jupyter notebooks](#run-the-jupyter-notebooks)
+4. [Deploy on Google App Engine](#deploy-on-google-app-engine)
+
+## Run with docker
 
 ```shell
 docker build -f "Dockerfile" -t stayinyourkot:latest "."
@@ -8,8 +14,8 @@ docker build -f "Dockerfile" -t stayinyourkot:latest "."
 docker run -p 8080:8080 stayinyourkot:latest
 ```
 
-# Run with pyenv and virtualenv
-https://realpython.com/intro-to-pyenv/
+## Run with pyenv and virtualenv
+https://realpython.com/intro-to-pyenv/  
 https://github.com/pyenv/pyenv
 
 Ìnstall dependencies
@@ -52,12 +58,7 @@ Run the app, which will be available on localhost:8050
 python viz/app.py
 ```
 
-# Deploy on Google App Engine
-
-An app.yaml file is included with the correct gunicorn command to deploy and run on GAE.
-
-
-# Run the jupyter notebooks
+## Run the jupyter notebooks
 
 Follow the instructions to run the app locally.
 
@@ -70,3 +71,7 @@ Run jupyter (notebooks are located in notebooks directory)
 ```shell
 jupyter notebook notebooks
 ```
+
+## Deploy on Google App Engine
+
+An app.yaml file is included with the correct gunicorn command to deploy and run on GAE.

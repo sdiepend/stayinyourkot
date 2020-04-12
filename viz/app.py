@@ -91,9 +91,37 @@ fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y
 fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['icu'], name='% growth ICU', marker={'color':'tomato'}))
 fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['deceased'], name='% growth deceased', marker={'color':'black'}))
 
-labels = ['Flanders', 'Wallonia', 'Brussels']
-values = df_cases_belgium.loc[:,['infected_flanders', 'infected_brussels', 'infected_wallonia']].iloc[-1].astype(int).values
+labels = ['Flanders', 'Wallonia', 'Brussels', 'unkown']
+values = df_cases_belgium.loc[:,['infected_flanders', 'infected_brussels', 'infected_wallonia', 'infected_unknown']].iloc[-1].astype(int).values
 fig_pie_regions = go.Figure(data=[go.Pie(labels=labels,values=sorted(values, reverse=True), hole=.4, sort=False, direction="clockwise")])
+
+
+# Get the data for deceased in the different regions and location of death
+df_deceased_belgium = pd.read_csv("https://raw.githubusercontent.com/sdiepend/stayinyourkot/master/data/COVID19_Belgium_deceased.csv")
+# select data for flanders
+flanders_deceased=df_deceased_belgium.loc[:,['total_deceased_flanders_hospital', 'total_deceased_flanders_elderlyhome', 'total_deceased_flanders_home', 'total_deceased_flanders_elsewhere', 'total_deceased_flanders_unknown']].iloc[-1].astype(int).sort_values(ascending=False)
+# map the right labels
+labels_mapping = {'hospital': 'Ziekenhuis', 'elderlyhome': 'WZC', '_home': 'Thuis', 'elsewhere': 'Elders', 'unknown': 'Onbekend'}
+flanders_labels = []
+for index_name in flanders_deceased.index:
+    for key, val in labels_mapping.items():
+        if key in index_name:
+            flanders_labels.append(val)
+# Plot in a pie chart
+fig_pie_flanders_places = go.Figure(data=[go.Pie(labels=flanders_labels,values=flanders_deceased.values, hole=.4, sort=False, direction="clockwise")])
+fig_pie_flanders_places.layout={'title': 'Deceased Flanders'}
+wallonia_deceased=df_deceased_belgium.loc[:,['total_deceased_wallonia_hospital', 'total_deceased_wallonia_elderlyhome', 
+                                             'total_deceased_wallonia_home', 'total_deceased_wallonia_elsewhere', 
+                                             'total_deceased_wallonia_unknown']].iloc[-1].astype(int).sort_values(ascending=False)
+
+wallonia_labels = []
+for index_name in wallonia_deceased.index:
+    for key, val in labels_mapping.items():
+        if key in index_name:
+            wallonia_labels.append(val)
+
+fig_pie_wallonia_places = go.Figure(data=[go.Pie(labels=wallonia_labels,values=wallonia_deceased.values, hole=.4, sort=False, direction="clockwise")])
+fig_pie_wallonia_places.layout={'title': 'Deceased Wallonia'}
 
 app.index_string = '''
 <!DOCTYPE html>
@@ -146,6 +174,21 @@ app.layout = html.Div(style={}, children=[
     html.Div([
         html.Div([
             dcc.Graph(
+                id='fig-flanders-deceased',
+                figure=fig_pie_flanders_places
+            )
+        ], className="six columns"),
+
+        html.Div([
+            dcc.Graph(
+                figure=fig_pie_wallonia_places
+            )
+        ], className="six columns")
+    ], className="row"),
+
+    html.Div([
+        html.Div([
+            dcc.Graph(
                 id='fig-infected-daily',
                 figure=fig_bar_infected_daily
             )
@@ -160,7 +203,7 @@ app.layout = html.Div(style={}, children=[
 
 
     dcc.Graph(
-        id='fig-bar-growth',
+        id='fig-bar-growth',    
         figure=fig_bar_growth
     ),
 

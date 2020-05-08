@@ -5,6 +5,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 import plotly.figure_factory as ff
+from plotly.subplots import make_subplots
 from dash.dependencies import Input, Output
 
 import requests
@@ -24,7 +25,7 @@ df_cases_belgium = pd.read_csv("https://raw.githubusercontent.com/sdiepend/stayi
 df_growth_belgium = pd.read_csv("https://raw.githubusercontent.com/sdiepend/stayinyourkot/master/data/COVID19_Belgium_growth.csv")
 
 # Select only the severe cases columns
-df_belgium_severe = df_cases_belgium[['date', 'daily_infected', 'daily_deceased', 'deceased', 'icu', 'capacity_icu', 'hospitalized']][13:]
+df_belgium_severe = df_cases_belgium[['date', 'tested', 'daily_infected', 'percentage_infected', 'daily_deceased', 'deceased', 'icu', 'capacity_icu', 'hospitalized']][13:]
 df_growth_belgium_severe = df_growth_belgium[['date', 'daily_infected', 'infected', 'daily_deceased', 'deceased', 'icu', 'capacity_icu', 'hospitalized', 'released']][13:]
 
 # Correctly format icu and hospitalized
@@ -74,11 +75,38 @@ fig_severe.add_shape(
 )
 fig_severe.add_trace(go.Scatter(x=["3/15/2020"], y=[3500], text=["Lockdown Light"], mode="text", name="Lockdown Light"))
 
-
-fig_bar_infected_daily = go.Figure()
-fig_bar_infected_daily.layout={'title': 'Daily new infections and deaths'}
-fig_bar_infected_daily.add_trace(go.Bar(x=df_belgium_severe['date'], y=df_belgium_severe['daily_infected'], name='New Infections'))
-fig_bar_infected_daily.add_trace(go.Bar(x=df_belgium_severe['date'], y=df_belgium_severe['daily_deceased'], name='New Deaths'))
+#### Tested vs Tested Positive ####
+fig_bar_infected_daily = make_subplots(specs=[[{"secondary_y": True}]])
+fig_bar_infected_daily.layout={'title': 'Daily tests performed and new infections'}
+fig_bar_infected_daily.add_trace(go.Bar(x=df_belgium_severe['date'], y=df_belgium_severe['tested'], name='Tests Performed', yaxis="y1"))
+fig_bar_infected_daily.add_trace(go.Bar(x=df_belgium_severe['date'], y=df_belgium_severe['daily_infected'], name='New Infections', yaxis="y1"))
+fig_bar_infected_daily.add_trace(go.Scatter(x=df_belgium_severe['date'], y=df_belgium_severe['percentage_infected'], name='% Infected', yaxis="y2"))
+fig_bar_infected_daily.update_layout(
+    xaxis=dict(
+        domain=[0, 1]
+    ),
+    yaxis=dict(
+        title="tested (positive)",
+        titlefont=dict(
+            color="#1f77b4"
+        ),
+        tickfont=dict(
+            color="#1f77b4"
+        )
+    ),
+    yaxis2=dict(
+        title="percentage infected",
+        titlefont=dict(
+            color="#ff7f0e"
+        ),
+        tickfont=dict(
+            color="#ff7f0e"
+        ),
+        anchor="free",
+        overlaying="y",
+        side="right",
+        position=1
+    ))
 
 fig_bar_growth = go.Figure()
 fig_bar_growth.layout={'title': 'Growth Rate infected and released'}
@@ -87,13 +115,15 @@ fig_bar_growth.add_trace(go.Bar(x=df_growth_belgium_severe['date'], y=df_growth_
 
 fig_bar_growth_severe = go.Figure()
 fig_bar_growth_severe.layout={'title': 'Growth Rate hospitalizations, intensive care and deceased'}
-fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['hospitalized'], name='% growth hospitalizations', line={'color': 'purple'}))
-fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['icu'], name='% growth ICU', marker={'color':'tomato'}))
-fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['deceased'], name='% growth deceased', marker={'color':'black'}))
+fig_bar_growth_severe.add_trace(go.Bar(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['hospitalized'], name='% growth hospitalizations'))
+fig_bar_growth_severe.add_trace(go.Bar(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['icu'], name='% growth ICU', marker={'color':'tomato'}))
+#fig_bar_growth_severe.add_trace(go.Scatter(x=df_growth_belgium_severe['date'], y=df_growth_belgium_severe['deceased'], name='% growth deceased', marker={'color':'black'}))
 
 labels = ['Flanders', 'Wallonia', 'Brussels', 'unkown']
 values = df_cases_belgium.loc[:,['infected_flanders', 'infected_brussels', 'infected_wallonia', 'infected_unknown']].iloc[-1].astype(int).values
 fig_pie_regions = go.Figure(data=[go.Pie(labels=labels,values=sorted(values, reverse=True), hole=.4, sort=False, direction="clockwise")])
+fig_pie_regions.layout={'title': 'Infections in different regions'}
+
 
 
 # Get the data for deceased in the different regions and location of death
@@ -172,34 +202,25 @@ app.layout = html.Div(style={}, children=[
     ),
 
     html.Div([
-        html.Div([
-            dcc.Graph(
-                id='fig-flanders-deceased',
-                figure=fig_pie_flanders_places
-            )
-        ], className="six columns"),
-
-        html.Div([
-            dcc.Graph(
-                figure=fig_pie_wallonia_places
-            )
-        ], className="six columns")
+        dcc.Graph(
+            figure=fig_bar_infected_daily
+        )
     ], className="row"),
 
-    html.Div([
-        html.Div([
-            dcc.Graph(
-                id='fig-infected-daily',
-                figure=fig_bar_infected_daily
-            )
-        ], className="eight columns"),
+    # html.Div([
+    #     html.Div([
+    #         dcc.Graph(
+    #             id='fig-infected-daily',
+    #             figure=fig_bar_infected_daily
+    #         )
+    #     ], className="eight columns"),
 
-        html.Div([
-            dcc.Graph(
-                figure=fig_pie_regions
-            )
-        ], className="four columns")
-    ], className="row"),
+    #     html.Div([
+    #         dcc.Graph(
+    #             figure=fig_pie_regions
+    #         )
+    #     ], className="four columns")
+    # ], className="row"),
 
 
     dcc.Graph(

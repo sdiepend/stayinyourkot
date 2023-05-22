@@ -8,7 +8,7 @@ dash-bootstrap-components==0.9.1
 chart_studio
 
 # Utils
-requests==2.23.0
+requests==2.31.0
 
 # Data wrangling and manipulation
 pandas==1.0.3

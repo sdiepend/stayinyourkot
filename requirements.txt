@@ -12,4 +12,4 @@ requests==2.23.0
 
 # Data wrangling and manipulation
 pandas==1.0.3
-scipy==1.4.1
+scipy==1.10.0
